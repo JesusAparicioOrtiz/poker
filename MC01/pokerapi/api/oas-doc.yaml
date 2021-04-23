@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Poker API
+  description: >-
+    API para obtener el resultado de una serie de manos en una partida de poker
+  contact:
+    name: Jesús
+    email: jesapaort@alum.us.es
+  license:
+    name: MIT
+    url: 'http://opensource.org/licenses/MIT'
+paths:
+  /api/v1/hands:
+    options:
+      summary: CORS support
+      operationId: corsSupport
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        200:
+          description: Default response for CORS method
+    post:
+      description: Compara una serie de manos dadas y retorna el ganador de cada una y el dinero que gana en función del bote y dinero apostado en la mano
+      operationId: obtainVerdict
+      requestBody:
+        x-name: Game
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Game"
+        description: Partida del que obtener el veredicto
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Verdict"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorModel'
+components:
+  schemas:
+    errorModel:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Verdict:
+      type: array
+      minItems: 1
+      items:
+        type: string
+    Game:
+      type: array
+      minItems: 1
+      items:
+        type: object
+        required:
+          - bote
+          - jugadas
+        properties:
+          bote:
+            type: integer
+          jugadas:
+            type: array
+            minItems: 2
+            items:
+              type: object 
+              required:
+                - jugador
+                - apuesta
+                - cartas
+              properties:
+                jugador:
+                  type: string
+                apuesta:
+                  type: integer
+                cartas:
+                  type: array
+                  minItems: 5
+                  maxItems: 5
+                  items:
+                    type: object
+                    required:
+                      - valor
+                      - palo
+                    properties:
+                      valor:
+                        type: string
+                      palo:
+                        type: string
